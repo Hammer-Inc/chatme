@@ -6,8 +6,8 @@ import pymysql
 from flask import *
 from flask_cors import CORS
 
-application = Flask(__name__)
-CORS(application)
+app = Flask(__name__)
+CORS(app)
 
 
 def check_auth(username, password):
@@ -35,12 +35,12 @@ def requires_auth(f):
     return decorated
 
 
-@application.route('/')
+@app.route('/')
 def index():
     return Response('Online', status=200)
 
 
-@application.route('/users', methods=['GET'])
+@app.route('/users', methods=['GET'])
 @requires_auth
 def get_users():
     try:
@@ -54,7 +54,7 @@ def get_users():
         return Response("A Database Error Occurred", 500)
 
 
-@application.route('/channels', methods=['GET'])
+@app.route('/channels', methods=['GET'])
 @requires_auth
 def get_channels():
     try:
@@ -68,7 +68,7 @@ def get_channels():
         return Response("A Database Error Occurred", 500)
 
 
-@application.route('/users/<user_id>/messages', methods=['GET'])
+@app.route('/users/<user_id>/messages', methods=['GET'])
 @requires_auth
 def get_message_by_user(user_id):
     try:
@@ -82,7 +82,7 @@ def get_message_by_user(user_id):
         return Response("A Database Error Occurred", 500)
 
 
-@application.route('/channels/<channel_id>/messages', methods=['GET'])
+@app.route('/channels/<channel_id>/messages', methods=['GET'])
 @requires_auth
 def get_messages(channel_id):
     try:
@@ -96,7 +96,7 @@ def get_messages(channel_id):
         return Response("A Database Error Occurred", 500)
 
 
-@application.route('/channels/<channel_id>/messages', methods=['POST', 'PUT'])
+@app.route('/channels/<channel_id>/messages', methods=['POST', 'PUT'])
 @requires_auth
 def create_message(channel_id):
     if "content" not in request.form or "author_id" not in request.form:
@@ -131,5 +131,5 @@ def connect():
 
 
 if __name__ == '__main__':
-    application.debug = True
-    application.run(host="0.0.0.0", port=80)
+    app.debug = True
+    app.run(host="0.0.0.0", port=80)
