@@ -125,6 +125,10 @@ def connect():
     password = os.getenv("PASSWORD")
     # db = os.getenv("DATABASE")
     db = "messaging"
+    print(host)
+    print(user)
+    print(password)
+    print(db)
 
     connection = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.DictCursor)
 
