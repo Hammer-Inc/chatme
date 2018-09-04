@@ -123,7 +123,8 @@ def connect():
     host = os.getenv("ENDPOINT")
     user = os.getenv("USER")
     password = os.getenv("PASSWORD")
-    db = os.getenv("DATABASE")
+    # db = os.getenv("DATABASE")
+    db = "messaging"
 
     connection = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.DictCursor)
 
