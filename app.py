@@ -90,7 +90,7 @@ def get_users(connection, page, per_page):
     try:
         with connection.cursor() as cursor:
             query = """SELECT `author_id` as USER FROM Users LIMIT %s, %s"""
-            cursor.execute(query, [per_page, page])
+            cursor.execute(query, (per_page, page))
             result = cursor.fetchall()
             return jsonify(result)
     except:
@@ -104,7 +104,7 @@ def get_channels(connection, page, per_page):
     try:
         with connection.cursor() as cursor:
             query = """SELECT channel_id, `COUNT(id)` as messages FROM Channels LIMIT %s, %s"""
-            cursor.execute(query, [per_page, page])
+            cursor.execute(query, (per_page, page))
             result = cursor.fetchall()
             return jsonify(result)
     except:
@@ -123,7 +123,7 @@ def get_message_by_user(connection, since, before, page, per_page, user_id):
             AND `Created_At` < from_unixtime(%s)
             LIMIT %s, %s
             """
-            cursor.execute(query, [user_id, since, before, per_page, page])
+            cursor.execute(query, (user_id, since, before, per_page, page))
             result = cursor.fetchall()
             return jsonify(result)
     except:
@@ -141,7 +141,7 @@ def get_messages(connection, since, before, per_page, page, channel_id):
             AND `Created_At` > from_unixtime(%s)
             AND `Created_At` < from_unixtime(%s)
             LIMIT %s, %s"""
-            cursor.execute(query, [channel_id, since, before, per_page, page])
+            cursor.execute(query, (channel_id, since, before, per_page, page))
             result = cursor.fetchall()
             return jsonify(result)
     except:
