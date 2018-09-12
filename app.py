@@ -29,7 +29,6 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         auth = request.authorization
-        print(auth)
         if not auth or not check_auth(auth.username, auth.password):
             return authenticate()
         return f(*args, **kwargs)
@@ -118,7 +117,6 @@ def get_message_by_user(connection, since, before, page, per_page, user_id):
 @requires_auth
 @database
 def get_messages(connection, since, before, per_page, page, channel_id):
-    print(request.method)
     try:
         with connection.cursor() as cursor:
             query = """SELECT id, channel_id, author_id, content FROM `MESSAGES` WHERE `channel_id` = %s
@@ -149,10 +147,12 @@ def create_message(connection, channel_id):
     author = data["author_id"]
 
     try:
+        user_addr = request.headers.get('X-Real-IP') or request.environ['REMOTE_ADDR']
         with connection.cursor() as cursor:
             query = """INSERT INTO MESSAGES (`channel_id`, `author_id`, `content`, `Modified_By`)
              VALUES(%s, %s, %s, %s)"""
-            cursor.execute(query, (channel_id, author, content, request.remote_addr))
+            print(user_addr)
+            cursor.execute(query, (channel_id, author, content, user_addr))
             connection.commit()
             return jsonify({
                 "result": "success",
