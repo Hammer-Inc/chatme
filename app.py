@@ -101,6 +101,7 @@ def get_message_by_user(connection, since, before, page, per_page, user_id):
             query = """SELECT id, channel_id, author_id, content FROM `MESSAGES` WHERE `author_id` = %s
             AND `Created_At` > from_unixtime(%s)
             AND `Created_At` < from_unixtime(%s)
+            ORDER BY MESSAGES.`Created_At` DESC
             LIMIT %s OFFSET %s
             """
             print(query % (user_id, since, before, per_page, page))
@@ -121,6 +122,7 @@ def get_messages(connection, since, before, per_page, page, channel_id):
             query = """SELECT id, channel_id, author_id, content FROM `MESSAGES` WHERE `channel_id` = %s
             AND `Created_At` >= from_unixtime(%s)
             AND `Created_At` < from_unixtime(%s)
+            ORDER BY MESSAGES.`Created_At` DESC
             LIMIT %s OFFSET %s"""
             cursor.execute(query, (channel_id, since, before, per_page, page))
             result = cursor.fetchall()
@@ -136,11 +138,13 @@ def get_messages(connection, since, before, per_page, page, channel_id):
 @requires_auth
 @database
 def create_message(connection, channel_id):
-    if "content" not in request.form or "author_id" not in request.form:
+    data = request.get_json() or request.form
+    if "content" not in data or "author_id" not in data:
+        print(list([x for x in data]))
         return Response("The request is incomplete/missing values", 403)
 
-    content = request.form["content"]
-    author = request.form["author_id"]
+    content = data["content"]
+    author = data["author_id"]
 
     try:
         with connection.cursor() as cursor:
