@@ -29,6 +29,7 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         auth = request.authorization
+        print(auth)
         if not auth or not check_auth(auth.username, auth.password):
             return authenticate()
         return f(*args, **kwargs)
@@ -117,6 +118,7 @@ def get_message_by_user(connection, since, before, page, per_page, user_id):
 @requires_auth
 @database
 def get_messages(connection, since, before, per_page, page, channel_id):
+    print(request.method)
     try:
         with connection.cursor() as cursor:
             query = """SELECT id, channel_id, author_id, content FROM `MESSAGES` WHERE `channel_id` = %s
